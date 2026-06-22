@@ -370,7 +370,7 @@ function handleCheckout(event) {
   
   // Format the WhatsApp message
   let message = `السلام عليكم ورحمة الله وبركاته،\n`;
-  message += `أود طلب المنتجات التالية من جروب *الأسوانية H. M أونلاين*:\n`;
+  message += `أود طلب المنتجات التالية من جروب *H. M أونلاين*:\n`;
   message += `---------------------------------\n`;
   
   cart.forEach((item, index) => {
