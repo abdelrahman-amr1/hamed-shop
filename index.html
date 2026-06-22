@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الأسوانية H. M جروب | منتجات أسوان الطبيعية أونلاين</title>
+  
+  <!-- FontAwesome for Premium Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Central Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <div class="logo">
+        <img src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=200" alt="الأسوانية H.M جروب">
+        <div class="logo-text">
+          <h1>الأسوانية H. M جروب</h1>
+          <span>للمنتجات والعطارة الأسوانية</span>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <a href="admin.html" class="admin-link">
+          <i class="fa-solid fa-lock"></i>
+          <span>لوحة التحكم</span>
+        </a>
+        <button class="cart-btn" id="cartBtn" onclick="toggleCart(true)">
+          <i class="fa-solid fa-basket-shopping"></i>
+          <span>السلة</span>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <span class="slogan-badge">شعارنا: اطلب واتمنى كله بيتحقق والجودة أساسنا</span>
+      <h2>منتجات من قلب أسوان ذات المذاق <span>الفريد والقوي</span></h2>
+      <p>توابل مميزة، مشروبات وأعشاب طبيعية أصلية، زيوت طبيعية خام وبخور أسواني خاص. الجودة هي سر تميزنا ورضاكم هو غايتنا!</p>
+      
+      <div class="info-cards">
+        <div class="info-card">
+          <i class="fa-solid fa-truck-fast"></i>
+          <div>
+            <h4>شحن مجاني</h4>
+            <p>لأي طلب بقيمة تتجاوز 1000 جنيه</p>
+          </div>
+        </div>
+        <div class="info-card">
+          <i class="fa-solid fa-location-dot"></i>
+          <div>
+            <h4>مناطق الشحن حالياً</h4>
+            <p>التوصيل متوفر في القاهرة والجيزة فقط</p>
+          </div>
+        </div>
+        <div class="info-card">
+          <i class="fa-solid fa-clock"></i>
+          <div>
+            <h4>تواصل 24 ساعة</h4>
+            <p>خدمة عملاء جاهزة للرد طوال اليوم</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shop Container -->
+  <main class="shop-container">
+    
+    <!-- Control Bar: Search & Category Filters -->
+    <div class="control-bar">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="ابحث عن منتج أسواني..." oninput="filterProducts()">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </div>
+      
+      <div class="categories-filter" id="categoryFilterContainer">
+        <button class="category-tab active" data-category="all" onclick="setCategory('all')">الكل</button>
+        <button class="category-tab" data-category="spices" onclick="setCategory('spices')">التوابل والبهارات</button>
+        <button class="category-tab" data-category="drinks" onclick="setCategory('drinks')">المشروبات الطبيعية</button>
+        <button class="category-tab" data-category="herbs" onclick="setCategory('herbs')">الأعشاب الطبيعية</button>
+        <button class="category-tab" data-category="oils" onclick="setCategory('oils')">الزيوت الخام</button>
+        <button class="category-tab" data-category="incense" onclick="setCategory('incense')">البخور المشكل</button>
+        <button class="category-tab" data-category="famous" onclick="setCategory('famous')">الأشهر في أسوان</button>
+      </div>
+    </div>
+
+    <!-- Product Grid Listing -->
+    <div class="products-grid" id="productsGrid">
+      <!-- Generated Dynamically by JS -->
+    </div>
+  </main>
+
+  <!-- Sliding Cart Drawer Panel -->
+  <div class="cart-drawer-overlay" id="cartDrawerOverlay" onclick="toggleCart(false)"></div>
+  <div class="cart-drawer" id="cartDrawer">
+    
+    <!-- Cart Header -->
+    <div class="cart-drawer-header">
+      <h2>سلة المشتريات</h2>
+      <button class="close-cart-btn" onclick="toggleCart(false)">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Free Shipping Tracker -->
+    <div class="shipping-tracker" id="shippingTracker">
+      <div class="shipping-tracker-text">
+        <span id="shippingTrackerMsg">أضف منتجات بقيمة 1000ج للحصول على شحن مجاني</span>
+        <strong id="shippingTrackerAmount">1000 ج متبقية</strong>
+      </div>
+      <div class="shipping-tracker-progress-bg">
+        <div class="shipping-tracker-progress-bar" id="shippingTrackerProgress"></div>
+      </div>
+    </div>
+
+    <!-- Cart Items list -->
+    <div class="cart-items-list" id="cartItemsList">
+      <!-- Dynamically Rendered Cart Items -->
+    </div>
+
+    <!-- Checkout section -->
+    <div class="cart-checkout-section" id="cartCheckoutSection" style="display: none;">
+      <div class="cart-summary-row">
+        <span>إجمالي المشتريات:</span>
+        <span id="cartSubtotal">0 ج</span>
+      </div>
+      <div class="cart-summary-row">
+        <span>مصاريف الشحن:</span>
+        <span id="cartShipping">احسب أولاً</span>
+      </div>
+      <div class="cart-summary-row total">
+        <span>الإجمالي الكلي:</span>
+        <span id="cartTotal">0 ج</span>
+      </div>
+
+      <!-- Customer Checkout Details Form -->
+      <form class="checkout-form" id="checkoutForm" onsubmit="handleCheckout(event)">
+        <div class="form-group">
+          <label for="custName"><i class="fa-solid fa-user"></i> الاسم بالكامل *</label>
+          <input type="text" id="custName" required placeholder="أدخل اسمك لتجهيز الأوردر">
+        </div>
+        
+        <div class="form-group">
+          <label for="custCity"><i class="fa-solid fa-map-location-dot"></i> المحافظة *</label>
+          <select id="custCity" required onchange="calculateShippingPrice()">
+            <option value="" disabled selected>اختر محافظة التوصيل</option>
+            <option value="cairo">القاهرة</option>
+            <option value="giza">الجيزة</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="custAddress"><i class="fa-solid fa-house"></i> العنوان بالتفصيل *</label>
+          <input type="text" id="custAddress" required placeholder="المنطقة، اسم الشارع، رقم العقار">
+        </div>
+        
+        <div class="form-group">
+          <label for="custPhone"><i class="fa-solid fa-phone"></i> رقم الهاتف (متاح عليه واتس) *</label>
+          <input type="tel" id="custPhone" required placeholder="01xxxxxxxxx">
+        </div>
+
+        <button type="submit" class="whatsapp-checkout-btn">
+          <i class="fa-brands fa-whatsapp"></i>
+          <span>إرسال الطلب عبر الواتساب</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bottom Mobile Sticky Cart Bar -->
+  <div class="floating-cart-bar" id="floatingCartBar">
+    <div class="floating-cart-info">
+      <h4 id="floatingCartTotal">0 ج</h4>
+      <p id="floatingCartCount">السلة فارغة</p>
+    </div>
+    <button class="open-drawer-btn" onclick="toggleCart(true)">
+      <i class="fa-solid fa-basket-shopping"></i>
+      <span>عرض السلة وتأكيد الطلب</span>
+    </button>
+  </div>
+
+  <!-- Toast notifications container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Footer Section -->
+  <footer>
+    <div class="footer-logo">
+      <h2>الأسوانية <span>H. M</span> جروب</h2>
+      <p>طعم وجودة يفوقان الوصف من قلب النوبة وأسوان</p>
+    </div>
+    <div class="footer-slogan">
+      "شعارنا: اطلب واتمنى كله بيتحقق والجودة أساسنا"
+    </div>
+    <div class="footer-contact">
+      <div class="footer-contact-item">
+        <i class="fa-brands fa-whatsapp"></i>
+        <span>للتواصل معنا: 01148666233</span>
+      </div>
+      <div class="footer-contact-item">
+        <i class="fa-solid fa-truck"></i>
+        <span>التوصيل متوفر في القاهرة والجيزة فقط حالياً</span>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 جميع الحقوق محفوظة لجروب الأسوانية H. M أونلاين. صُنع بكل حب.
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/database.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
