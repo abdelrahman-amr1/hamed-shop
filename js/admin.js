@@ -15,15 +15,68 @@ const CATEGORY_LABELS = {
   famous: "الأشهر في أسوان"
 };
 
+const ADMIN_USER = "admin";
+const ADMIN_PASS = "aswan_group_admin";
+
 // Initialize Admin Interface
 document.addEventListener("DOMContentLoaded", () => {
-  loadAdminProducts();
+  checkAuth();
   
   // Custom event listener for database updates
   window.addEventListener("productsUpdated", () => {
-    loadAdminProducts();
+    if (isAuthenticated()) {
+      loadAdminProducts();
+    }
   });
 });
+
+// Check if authenticated
+function isAuthenticated() {
+  return sessionStorage.getItem("aswan_admin_auth") === "true";
+}
+
+// Check session storage and toggle views
+function checkAuth() {
+  const loginContainer = document.getElementById("adminLoginContainer");
+  const dashboardContent = document.getElementById("adminDashboardContent");
+  const logoutBtn = document.getElementById("logoutBtn");
+  
+  if (isAuthenticated()) {
+    if (loginContainer) loginContainer.style.display = "none";
+    if (dashboardContent) dashboardContent.style.display = "block";
+    if (logoutBtn) logoutBtn.style.display = "flex";
+    loadAdminProducts();
+  } else {
+    if (loginContainer) loginContainer.style.display = "flex";
+    if (dashboardContent) dashboardContent.style.display = "none";
+    if (logoutBtn) logoutBtn.style.display = "none";
+  }
+}
+
+// Handle Login Form Submission
+function handleAdminLogin(event) {
+  event.preventDefault();
+  const user = document.getElementById("loginUser").value.trim();
+  const pass = document.getElementById("loginPass").value.trim();
+  
+  if (user === ADMIN_USER && pass === ADMIN_PASS) {
+    sessionStorage.setItem("aswan_admin_auth", "true");
+    checkAuth();
+    showToast("تم تسجيل الدخول بنجاح! مرحباً بك.");
+  } else {
+    showToast("خطأ في اسم المستخدم أو كلمة المرور!", "danger");
+  }
+}
+
+// Handle Logout
+function handleAdminLogout() {
+  const confirmLogout = confirm("هل أنت متأكد من رغبتك في تسجيل الخروج؟");
+  if (!confirmLogout) return;
+  
+  sessionStorage.removeItem("aswan_admin_auth");
+  checkAuth();
+  showToast("تم تسجيل الخروج بنجاح.");
+}
 
 // Load products and render admin UI
 function loadAdminProducts() {
