@@ -2,9 +2,9 @@
 
 const DEFAULT_PRODUCTS = [
   // --- 1. Spices (التوابل) ---
-  { id: "s1", name: "فلفل أسود أسواني مطحون", category: "spices", price: 0, unit: "100 جرام", available: true, description: "فلفل أسود فاخر مطحون طازج برائحة نفاذة وطعم قوي." },
+  { id: "s1", name: "فلفل أسود أسواني", category: "spices", price: 0, unit: "100 جرام", available: true, description: "فلفل أسود فاخر طازج برائحة نفاذة وطعم قوي." },
   { id: "s2", name: "كمون بلدي منقى", category: "spices", price: 0, unit: "100 جرام", available: true, description: "كمون بلدي ذو طعم مميز ورائحة عطرية قوية من قلب أسوان." },
-  { id: "s3", name: "كزبرة ناشفة مطحونة", category: "spices", price: 0, unit: "100 جرام", available: true, description: "كزبرة جافة مطحونة بعناية، مثالية لجميع المأكولات." },
+  { id: "s3", name: "كزبرة ناشفة", category: "spices", price: 0, unit: "100 جرام", available: true, description: "كزبرة جافة منقاة بعناية، مثالية لجميع المأكولات." },
   { id: "s4", name: "السبع بهارات الأسوانية", category: "spices", price: 0, unit: "100 جرام", available: true, description: "خلطة بهارات سحرية بنسب متوازنة ونكهة لا تُقاوم." },
   { id: "s5", name: "شطة حمراء ناري", category: "spices", price: 0, unit: "100 جرام", available: true, description: "شطة أسوانية حارة جداً، مطحونة من قرون الشطة الطبيعية المجففة." },
   { id: "s6", name: "حبهان (هيل) فاخر حصى", category: "spices", price: 0, unit: "100 جرام", available: true, description: "حبهان جامبو ذو فصوص ممتلئة ورائحة عطرية مكثفة." },
@@ -13,7 +13,7 @@ const DEFAULT_PRODUCTS = [
   { id: "s9", name: "بهارات فراخ فاخرة", category: "spices", price: 0, unit: "100 جرام", available: true, description: "خلطة مخصصة لتتبيل الدجاج المشوي والمطبوخ بنكهة ممتازة." },
   { id: "s10", name: "كاري هندي أصلي", category: "spices", price: 0, unit: "100 جرام", available: true, description: "بهار الكاري ذو اللون الذهبي الجميل والمذاق الدافئ الغني." },
   { id: "s11", name: "روز ماري (إكليل الجبل)", category: "spices", price: 0, unit: "100 جرام", available: true, description: "أوراق الروزماري المجففة ذات الرائحة العشبية المنعشة." },
-  { id: "s12", name: "خولنجان مطحون", category: "spices", price: 0, unit: "100 جرام", available: true, description: "جذور الخولنجان المطحونة، بهار مميز للمأكولات والمشروبات الدافئة." },
+  { id: "s12", name: "خولنجان", category: "spices", price: 0, unit: "100 جرام", available: true, description: "جذور الخولنجان، بهار مميز للمأكولات والمشروبات الدافئة." },
   { id: "s13", name: "جوزة الطيب كاملة", category: "spices", price: 0, unit: "حبة", available: true, description: "ثمار جوزة الطيب الكاملة الفاخرة لطحنها طازجة عند الاستخدام." },
   { id: "s14", name: "ليمون أسود (لومي) كامل", category: "spices", price: 0, unit: "100 جرام", available: true, description: "ليمون أسواني مجفف، أساسي للأرز البسمتي والكبسة والشوربة." },
   { id: "s15", name: "ورق لاورا (غار) منقى", category: "spices", price: 0, unit: "100 جرام", available: true, description: "أوراق غار عريضة ونظيفة لإضافة نكهة غنية للشوربات واللحوم." },
@@ -40,7 +40,7 @@ const DEFAULT_PRODUCTS = [
   { id: "d12", name: "تيليو (زهر الزيزفون)", category: "drinks", price: 0, unit: "100 جرام", available: true, description: "أوراق وزهور التيليو المهدئة للأعصاب والمسكنة للسعال والبرد." },
 
   // --- 3. Herbs (الأعشاب الطبيعية) ---
-  { id: "h1", name: "أشواجاندا مطحونة (جينسينج هندي)", category: "herbs", price: 0, unit: "100 جرام", available: true, description: "جذور الأشواجاندا النقية لتقليل التوتر، زيادة الطاقة وتحسين النوم." },
+  { id: "h1", name: "أشواجاندا (جينسينج هندي)", category: "herbs", price: 0, unit: "100 جرام", available: true, description: "جذور الأشواجاندا النقية لتقليل التوتر، زيادة الطاقة وتحسين النوم." },
   { id: "h2", name: "شرش زلوع أصلي", category: "herbs", price: 0, unit: "100 جرام", available: true, description: "جذور شرش الزلوع البري المعروف بفوائده القوية لزيادة النشاط والحيوية." },
   { id: "h3", name: "بذور القرع (لب قرع نيا)", category: "herbs", price: 0, unit: "100 جرام", available: true, description: "بذور القرع النيئة الغنية بالزنك والمعادن المفيدة جداً لصحة البروستاتا." },
   { id: "h4", name: "حب الرشاد بلدي", category: "herbs", price: 0, unit: "100 جرام", available: true, description: "بذور حب الرشاد الغنية بالكالسيوم والحديد والمفيدة جداً للمفاصل والعظام." },
@@ -51,7 +51,7 @@ const DEFAULT_PRODUCTS = [
   { id: "h9", name: "أوراق زيتون القدس مجففة", category: "herbs", price: 0, unit: "100 جرام", available: true, description: "أوراق زيتون القدس الطبيعية الممتازة لتخفيض نسبة السكر وضغط الدم." },
   { id: "h10", name: "مسحوق جذور الماكا", category: "herbs", price: 0, unit: "100 جرام", available: true, description: "مسحوق جذور الماكا الأصلية لتعزيز القدرة البدنية والتحمل والتوازن الهرموني." },
   { id: "h11", name: "حبوب لقاح النحل طبيعية", category: "herbs", price: 0, unit: "100 جرام", available: true, description: "حبوب لقاح النحل الغنية بالبروتينات والإنزيمات لتقوية المناعة العامة." },
-  { id: "h12", name: "جذور الجنسينج الأحمر المطحون", category: "herbs", price: 0, unit: "50 جرام", available: true, description: "جنسينج أحمر كوري أصلي مطحون لزيادة التركيز وتنشيط الدورة الدموية." },
+  { id: "h12", name: "جذور الجنسينج الأحمر", category: "herbs", price: 0, unit: "50 جرام", available: true, description: "جنسينج أحمر كوري أصلي لزيادة التركيز وتنشيط الدورة الدموية." },
 
   // --- 4. Natural Oils (الزيوت الطبيعية) ---
   { id: "o1", name: "زيت الروزماري خام نقي", category: "oils", price: 0, unit: "عبوة 100 مل", available: true, description: "زيت إكليل الجبل المركز، ممتاز لتنشيط فروة الرأس وتحفيز نمو الشعر." },
@@ -95,12 +95,16 @@ function initDatabase() {
   if (!current) {
     localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_PRODUCTS));
   } else {
-    // If it exists, check if the first item (s1) has a price > 0.
-    // If so, force reset once to apply the new 0 EGP pricing.
+    // If it exists, check if the first item (s1) has a price > 0,
+    // or if its name still contains "مطحون".
+    // If so, force reset once to apply the new pricing and names.
     try {
       const parsed = JSON.parse(current);
-      if (parsed.length > 0 && parsed[0].price > 0) {
-        localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_PRODUCTS));
+      if (parsed.length > 0) {
+        const firstItem = parsed[0];
+        if (firstItem.price > 0 || firstItem.name.includes("مطحون")) {
+          localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_PRODUCTS));
+        }
       }
     } catch (e) {
       localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_PRODUCTS));
