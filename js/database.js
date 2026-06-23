@@ -89,26 +89,17 @@ const DEFAULT_PRODUCTS = [
 
 const DB_KEY = "aswan_shop_products";
 
+const DB_VERSION_KEY = "aswan_db_version";
+const CURRENT_VERSION = "4"; // Changed version to trigger reset for name updates
+
 // Initialize Database in localStorage
 function initDatabase() {
   const current = localStorage.getItem(DB_KEY);
-  if (!current) {
+  const version = localStorage.getItem(DB_VERSION_KEY);
+  
+  if (!current || version !== CURRENT_VERSION) {
     localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_PRODUCTS));
-  } else {
-    // If it exists, check if the first item (s1) has a price > 0,
-    // or if its name still contains "مطحون".
-    // If so, force reset once to apply the new pricing and names.
-    try {
-      const parsed = JSON.parse(current);
-      if (parsed.length > 0) {
-        const firstItem = parsed[0];
-        if (firstItem.price > 0 || firstItem.name.includes("مطحون")) {
-          localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_PRODUCTS));
-        }
-      }
-    } catch (e) {
-      localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_PRODUCTS));
-    }
+    localStorage.setItem(DB_VERSION_KEY, CURRENT_VERSION);
   }
 }
 
