@@ -90,7 +90,7 @@ const DEFAULT_PRODUCTS = [
 const DB_KEY = "aswan_shop_products";
 
 const DB_VERSION_KEY = "aswan_db_version";
-const CURRENT_VERSION = "4"; // Changed version to trigger reset for name updates
+const CURRENT_VERSION = "5"; // Changed version to trigger reset for name updates
 
 // Initialize Database in localStorage
 function initDatabase() {
