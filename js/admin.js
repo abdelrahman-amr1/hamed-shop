@@ -287,6 +287,12 @@ function deleteProduct(productId) {
   
   products = products.filter(p => p.id !== productId);
   saveProducts(products);
+  
+  // Delete from Firestore directly
+  if (typeof window.db !== "undefined") {
+    window.db.collection("products").doc(productId).delete().catch(e => console.error("Firestore delete error:", e));
+  }
+  
   loadAdminProducts();
   showToast(`تم حذف منتج "${product.name}" بنجاح.`, "danger");
 }

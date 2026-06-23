@@ -1,4 +1,4 @@
-// Aswan Shop Database Manager
+// H.M Group Storefront Database Manager (with Firebase Firestore Sync)
 
 const DEFAULT_PRODUCTS = [
   // --- 1. Spices (التوابل) ---
@@ -88,11 +88,10 @@ const DEFAULT_PRODUCTS = [
 ];
 
 const DB_KEY = "aswan_shop_products";
-
 const DB_VERSION_KEY = "aswan_db_version";
-const CURRENT_VERSION = "5"; // Changed version to trigger reset for name updates
+const CURRENT_VERSION = "6"; // Bumped version to force local DB initialization
 
-// Initialize Database in localStorage
+// Initialize Database in localStorage (Fallback Cache)
 function initDatabase() {
   const current = localStorage.getItem(DB_KEY);
   const version = localStorage.getItem(DB_VERSION_KEY);
@@ -103,29 +102,105 @@ function initDatabase() {
   }
 }
 
-// Get all products from database
+// Get all products from local cache, and trigger background fetch from Firestore
 function getProducts() {
   initDatabase();
+  
+  // Asynchronously sync from Firestore
+  setTimeout(() => {
+    fetchProductsFromFirestore();
+  }, 100);
+
   try {
     return JSON.parse(localStorage.getItem(DB_KEY));
   } catch (e) {
-    console.error("Error reading products database, resetting to default.", e);
-    localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_PRODUCTS));
     return DEFAULT_PRODUCTS;
   }
 }
 
-// Save products to database
-function saveProducts(products) {
-  localStorage.setItem(DB_KEY, JSON.stringify(products));
-  // Dispatch a custom event to notify other windows or components
-  window.dispatchEvent(new Event("productsUpdated"));
+// Asynchronously fetch products from Firestore and update local storage cache & UI
+async function fetchProductsFromFirestore() {
+  if (typeof window.db === "undefined") {
+    return;
+  }
+  
+  try {
+    const snapshot = await window.db.collection("products").get();
+    if (snapshot.empty) {
+      // If firestore is empty, upload default products
+      console.log("Firestore database is empty. Uploading default products list...");
+      const batch = window.db.batch();
+      DEFAULT_PRODUCTS.forEach(p => {
+        const docRef = window.db.collection("products").doc(p.id);
+        batch.set(docRef, p);
+      });
+      await batch.commit();
+      localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_PRODUCTS));
+    } else {
+      const fbProducts = [];
+      snapshot.forEach(doc => {
+        fbProducts.push(doc.data());
+      });
+      
+      // Sort to keep consistent listing order
+      fbProducts.sort((a, b) => a.id.localeCompare(b.id));
+      
+      // Check if cache changed before writing to avoid infinite event loops
+      const cacheStr = localStorage.getItem(DB_KEY);
+      const fbProductsStr = JSON.stringify(fbProducts);
+      
+      if (cacheStr !== fbProductsStr) {
+        localStorage.setItem(DB_KEY, fbProductsStr);
+        window.dispatchEvent(new Event("productsUpdated"));
+      }
+    }
+  } catch (error) {
+    console.error("Firestore sync error:", error);
+  }
 }
 
-// Reset database to default
+// Save products to local storage & Firestore (Batch write for settings/import operations)
+function saveProducts(productsList) {
+  localStorage.setItem(DB_KEY, JSON.stringify(productsList));
+  window.dispatchEvent(new Event("productsUpdated"));
+  
+  // Write batch to Firestore
+  if (typeof window.db !== "undefined") {
+    try {
+      const batch = window.db.batch();
+      // Write all products
+      productsList.forEach(p => {
+        const docRef = window.db.collection("products").doc(p.id);
+        batch.set(docRef, p);
+      });
+      batch.commit().catch(e => console.error("Firebase Batch write failed:", e));
+    } catch (e) {
+      console.error("Error setting up batch write:", e);
+    }
+  }
+}
+
+// Reset database to default (Clear Firestore + Local cache)
 function resetDatabase() {
   localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_PRODUCTS));
   window.dispatchEvent(new Event("productsUpdated"));
+  
+  if (typeof window.db !== "undefined") {
+    window.db.collection("products").get().then(snapshot => {
+      const batch = window.db.batch();
+      // Delete old documents
+      snapshot.forEach(doc => {
+        batch.delete(doc.ref);
+      });
+      // Add defaults
+      DEFAULT_PRODUCTS.forEach(p => {
+        const docRef = window.db.collection("products").doc(p.id);
+        batch.set(docRef, p);
+      });
+      return batch.commit();
+    }).catch(e => console.error("Error resetting Firestore DB:", e));
+  }
+  
   return DEFAULT_PRODUCTS;
 }
 
