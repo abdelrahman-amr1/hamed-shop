@@ -1,4 +1,4 @@
-// H.M Group Storefront Database Manager (with Firebase Firestore Sync)
+// H.M Group Storefront Database Manager (with Supabase PostgreSQL Sync)
 
 const DEFAULT_PRODUCTS = [
   // --- 1. Spices (التوابل) ---
@@ -69,7 +69,7 @@ const DEFAULT_PRODUCTS = [
   { id: "o13", name: "زيت الحلبة الطبيعي", category: "oils", price: 0, unit: "عبوة 100 مل", available: true, description: "مستخلص الحلبة المعصور بارد لترطيب وتسمين مناطق الوجه والبشرة." },
   { id: "o14", name: "زيت عشبة 304 الخاصة للشعر", category: "oils", price: 0, unit: "عبوة 200 مل", available: true, description: "تركيبة زيوت طبيعية خاصة 304 لتطويل وتكثيف وتنعيم الشعر التالف." },
   { id: "o15", name: "زيت الفازلين الطبيعي", category: "oils", price: 0, unit: "عبوة 100 مل", available: true, description: "زيت خفيف لتنعيم وتصفيف الشعر وحماية البشرة من الجفاف الشديد." },
-  { id: "o16", name: "زيت ذيل الحصان الأصلي", category: "oils", price: 0, unit: "عبوة 100 مل", available: true, description: "زيت غني بالسيليكا الطبيعية يعمل على تقوية ألياف الشعر ومنع تكسره." },
+  { id: "o16", name: "زيت ذيل الحصان الأصلي", category: "oils", price: 0, unit: "عبوة 100 ml", available: true, description: "زيت غني بالسيليكا الطبيعية يعمل على تقوية ألياف الشعر ومنع تكسره." },
   { id: "o17", name: "زيت الحرجل الأسواني", category: "oils", price: 0, unit: "عبوة 100 مل", available: true, description: "زيت الحرجل العشبي الفعال في تخفيف آلام المفاصل والروماتيزم." },
   { id: "o18", name: "زيت قرع العسل (اليقطين)", category: "oils", price: 0, unit: "عبوة 100 مل", available: true, description: "زيت بذور اليقطين النقي، يمنع تساقط الشعر الهرموني وممتاز للبشرة." },
   { id: "o19", name: "زيت الزنجبيل الحار", category: "oils", price: 0, unit: "عبوة 100 مل", available: true, description: "مستخلص الزنجبيل الدافئ لتنشيط الفروة وتدليك العضلات لتخفيف التوتر." },
@@ -79,7 +79,7 @@ const DEFAULT_PRODUCTS = [
   { id: "i1", name: "خلطة البخور الأسوانية الخاصة H.M", category: "incense", price: 0, unit: "علبة (حوالي 150 جرام)", available: true, description: "خلطة خاصة ومميزة جداً من أعشاب وعطور أسوان النادرة. رائحة ذكية تدوم طويلاً، متوفرة حصرياً لدينا." },
 
   // --- 6. Famous Aswan Products (المنتجات المشهورة في أسوان) ---
-  { id: "f1", name: "فسيخ أسواني سوبر كلابي فاخر", category: "famous", price: 0, unit: "كيلو", available: true, description: "فسيخ أسواني أصلي مملح بعناية، لحم زبدة وردي ونسبة ملوحة مضبوطة تماماً." },
+  { id: "f1", name: "فسيخ أسواني سوبر كلابي فاخر", category: "famous", price: 0, unit: "كيلو", available: true, description: "فسيخ أسواني أصل مملح بعناية، لحم زبدة وردي ونسبة ملوحة مضبوطة تماماً." },
   { id: "f2", name: "ملوحة أسوانية ممتازة", category: "famous", price: 0, unit: "كيلو", available: true, description: "ملوحة راية أسوانية فاخرة، منظفة ومحفوظة بالزيت والخل والبهارات." },
   { id: "f3", name: "مش قديم فلاحي بالمرتة والبهارات", category: "famous", price: 0, unit: "برطمان 1 كيلو", available: true, description: "جبنة مش قديمة معتقة غنية بالطعم القوي ومتبلة بالفلفل الأحمر والقرون الحارة." },
   { id: "f4", name: "سوداني أسواني مقشر سوبر مقلي", category: "famous", price: 0, unit: "كيلو", available: true, description: "سوداني أسواني بلدي مقشر ومحمص بعناية، ذو حجم كبير وطعم مقرمش شهي." },
@@ -89,9 +89,9 @@ const DEFAULT_PRODUCTS = [
 
 const DB_KEY = "aswan_shop_products";
 const DB_VERSION_KEY = "aswan_db_version";
-const CURRENT_VERSION = "6"; // Bumped version to force local DB initialization
+const CURRENT_VERSION = "7"; // Bumped version to force cache update
 
-// Initialize Database in localStorage (Fallback Cache)
+// Initialize Local Cache Database
 function initDatabase() {
   const current = localStorage.getItem(DB_KEY);
   const version = localStorage.getItem(DB_VERSION_KEY);
@@ -102,13 +102,13 @@ function initDatabase() {
   }
 }
 
-// Get all products from local cache, and trigger background fetch from Firestore
+// Get all products from local cache, and trigger background fetch from Supabase
 function getProducts() {
   initDatabase();
   
-  // Asynchronously sync from Firestore
+  // Asynchronously sync from Supabase
   setTimeout(() => {
-    fetchProductsFromFirestore();
+    fetchProductsFromSupabase();
   }, 100);
 
   try {
@@ -118,36 +118,27 @@ function getProducts() {
   }
 }
 
-// Asynchronously fetch products from Firestore and update local storage cache & UI
-async function fetchProductsFromFirestore() {
-  if (typeof window.db === "undefined") {
+// Asynchronously fetch products from Supabase and update local storage & UI
+async function fetchProductsFromSupabase() {
+  if (typeof window.supabaseDb === "undefined" || !window.supabaseDb) {
     return;
   }
   
   try {
-    const snapshot = await window.db.collection("products").get();
-    if (snapshot.empty) {
-      // If firestore is empty, upload default products
-      console.log("Firestore database is empty. Uploading default products list...");
-      const batch = window.db.batch();
-      DEFAULT_PRODUCTS.forEach(p => {
-        const docRef = window.db.collection("products").doc(p.id);
-        batch.set(docRef, p);
-      });
-      await batch.commit();
+    const { data, error } = await window.supabaseDb.from("products").select("*");
+    if (error) throw error;
+    
+    if (!data || data.length === 0) {
+      console.log("Supabase table is empty. Seeding default products...");
+      const { error: seedError } = await window.supabaseDb.from("products").insert(DEFAULT_PRODUCTS);
+      if (seedError) throw seedError;
       localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_PRODUCTS));
     } else {
-      const fbProducts = [];
-      snapshot.forEach(doc => {
-        fbProducts.push(doc.data());
-      });
-      
       // Sort to keep consistent listing order
-      fbProducts.sort((a, b) => a.id.localeCompare(b.id));
+      data.sort((a, b) => a.id.localeCompare(b.id));
       
-      // Check if cache changed before writing to avoid infinite event loops
       const cacheStr = localStorage.getItem(DB_KEY);
-      const fbProductsStr = JSON.stringify(fbProducts);
+      const fbProductsStr = JSON.stringify(data);
       
       if (cacheStr !== fbProductsStr) {
         localStorage.setItem(DB_KEY, fbProductsStr);
@@ -155,50 +146,41 @@ async function fetchProductsFromFirestore() {
       }
     }
   } catch (error) {
-    console.error("Firestore sync error:", error);
+    console.error("Supabase sync error:", error);
   }
 }
 
-// Save products to local storage & Firestore (Batch write for settings/import operations)
+// Save products to local storage & Supabase (batch upsert for edit/add/backup imports)
 function saveProducts(productsList) {
   localStorage.setItem(DB_KEY, JSON.stringify(productsList));
   window.dispatchEvent(new Event("productsUpdated"));
   
-  // Write batch to Firestore
-  if (typeof window.db !== "undefined") {
-    try {
-      const batch = window.db.batch();
-      // Write all products
-      productsList.forEach(p => {
-        const docRef = window.db.collection("products").doc(p.id);
-        batch.set(docRef, p);
-      });
-      batch.commit().catch(e => console.error("Firebase Batch write failed:", e));
-    } catch (e) {
-      console.error("Error setting up batch write:", e);
-    }
+  // Write to Supabase using upsert
+  if (typeof window.supabaseDb !== "undefined" && window.supabaseDb) {
+    window.supabaseDb.from("products").upsert(productsList)
+      .then(({ error }) => {
+        if (error) console.error("Supabase upsert error:", error);
+      })
+      .catch(e => console.error("Supabase upsert exception:", e));
   }
 }
 
-// Reset database to default (Clear Firestore + Local cache)
+// Reset database to default (Clear Supabase table + Local cache)
 function resetDatabase() {
   localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_PRODUCTS));
   window.dispatchEvent(new Event("productsUpdated"));
   
-  if (typeof window.db !== "undefined") {
-    window.db.collection("products").get().then(snapshot => {
-      const batch = window.db.batch();
-      // Delete old documents
-      snapshot.forEach(doc => {
-        batch.delete(doc.ref);
-      });
-      // Add defaults
-      DEFAULT_PRODUCTS.forEach(p => {
-        const docRef = window.db.collection("products").doc(p.id);
-        batch.set(docRef, p);
-      });
-      return batch.commit();
-    }).catch(e => console.error("Error resetting Firestore DB:", e));
+  if (typeof window.supabaseDb !== "undefined" && window.supabaseDb) {
+    // Delete all products and insert defaults
+    window.supabaseDb.from("products").delete().neq("id", "placeholder_val")
+      .then(({ error }) => {
+        if (error) throw error;
+        return window.supabaseDb.from("products").insert(DEFAULT_PRODUCTS);
+      })
+      .then(({ error }) => {
+        if (error) console.error("Supabase seed error during reset:", error);
+      })
+      .catch(e => console.error("Error resetting Supabase DB:", e));
   }
   
   return DEFAULT_PRODUCTS;

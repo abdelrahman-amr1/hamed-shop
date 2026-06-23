@@ -288,9 +288,9 @@ function deleteProduct(productId) {
   products = products.filter(p => p.id !== productId);
   saveProducts(products);
   
-  // Delete from Firestore directly
-  if (typeof window.db !== "undefined") {
-    window.db.collection("products").doc(productId).delete().catch(e => console.error("Firestore delete error:", e));
+  // Delete from Supabase directly
+  if (typeof window.supabaseDb !== "undefined" && window.supabaseDb) {
+    window.supabaseDb.from("products").delete().eq("id", productId).catch(e => console.error("Supabase delete error:", e));
   }
   
   loadAdminProducts();
