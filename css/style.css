@@ -641,6 +641,7 @@ header {
   width: 100%;
   max-width: 480px;
   height: 100vh;
+  height: 100dvh;
   background: var(--light-color);
   z-index: 1001;
   box-shadow: var(--shadow-lg);
@@ -714,10 +715,17 @@ header {
   border-radius: 10px;
 }
 
+.cart-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
 /* Cart Items Container */
 .cart-items-list {
   flex: 1;
-  overflow-y: auto;
+  flex-shrink: 0;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -824,6 +832,7 @@ header {
   background: var(--white);
   border-top: 1px solid var(--gray-200);
   box-shadow: 0 -4px 15px rgba(0,0,0,0.03);
+  flex-shrink: 0;
 }
 
 .cart-summary-row {
